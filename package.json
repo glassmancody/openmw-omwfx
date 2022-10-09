@@ -1,7 +1,7 @@
 {
     "name": "omwfx",
-    "displayName": "omwfx",
-    "description": "OpenMW Technique File",
+    "displayName": "OpenMW Shading Language",
+    "description": "Postprocessing shading language support (omwfx)",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.72.0"
@@ -9,7 +9,7 @@
     "publisher": "wazabear",
     "license": "LICENSE.md",
     "icon": "icon.png",
-    "main": "./out/extension",
+    "main": "./src/extension.js",
 	"bugs": {
 		"url": "https://github.com/glassmancody/openmw-omwfx/issues"
 	},
@@ -31,7 +31,6 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
         "watch": "npm-watch",
         "build": "npx js-yaml syntaxes/omwfx.tmLanguage.yaml > syntaxes/omwfx.tmLanguage.json"
     },
