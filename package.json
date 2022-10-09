@@ -7,6 +7,21 @@
         "vscode": "^1.72.0"
     },
     "publisher": "wazabear",
+    "license": "LICENSE.md",
+    "icon": "icon.png",
+    "main": "./out/extension",
+	"bugs": {
+		"url": "https://github.com/glassmancody/openmw-omwfx/issues"
+	},
+	"homepage": "https://github.com/glassmancody/openmw-omwfx/blob/main/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/glassmancody/openmw-omwfx.git"
+	},
+	"galleryBanner": {
+		"color": "#6206c9",
+		"theme": "dark"
+	},
     "watch": {
         "build" : {
             "patterns": [
