@@ -1,0 +1,65 @@
+{
+    "name": "omwfx",
+    "displayName": "omwfx",
+    "description": "OpenMW Technique File",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.72.0"
+    },
+    "publisher": "wazabear",
+    "watch": {
+        "build" : {
+            "patterns": [
+                "syntaxes"
+            ],
+            "extensions": "yaml"
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "watch": "npm-watch",
+        "build": "npx js-yaml syntaxes/omwfx.tmLanguage.yaml > syntaxes/omwfx.tmLanguage.json"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "activationEvents": [
+        "onLanguage:omwfx"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "omwfx",
+                "aliases": [
+                    "omwfx",
+                    "OMWFX"
+                ],
+                "extensions": [
+                    ".omwfx"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "omwfx",
+                "scopeName": "source.omwfx",
+                "path": "./syntaxes/omwfx.tmLanguage.json",
+                "embeddedLanguages": {
+                    "meta.embedded.block.cpp": "cpp"
+                }
+            },
+            {
+                "path": "./syntaxes/glsl.tmLanguage.json",
+                "scopeName": "source.glsl.omwfx",
+                "injectTo": [ "source.glsl", "source.omwfx" ]
+            }
+        ]
+    },
+    "devDependencies": {
+        "js-yaml": "^4.1.0"
+    },
+    "dependencies": {
+        "npm-watch": "^0.11.0"
+    }
+}

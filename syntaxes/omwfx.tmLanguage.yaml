@@ -1,0 +1,181 @@
+scopeName: source.omwfx
+name: OpenMW Shading Language
+fileTypes:
+  - omwfx
+
+patterns:
+  - include: "#body"
+
+repository:
+  body:
+    patterns:
+      - include: "#blocks"
+
+  blocks:
+    patterns:
+      - include: "#named-block-glsl"
+      - include: "#named-block-config"
+      - include: "#anonymous-block-glsl"
+      - include: "#anonymous-block-config"
+
+  named-block-glsl:
+    patterns:
+      - name: keyword.control.named.glsl.omwfx
+        begin: '(?i)\b(fragment|vertex|compute)\b'
+        end: '(?<=\})'
+        patterns:
+          - name: variable.other
+            begin: '\b([a-z|A-Z]\w*)\b'
+            end: '(?<=\})'
+            contentName: meta.embedded.block.glsl
+            patterns:
+              - include: "source.glsl"
+              - include: "#balanced-brackets"
+
+  anonymous-block-glsl:
+    patterns:
+      - name: keyword.control.anonymous.glsl.omwfx
+        contentName: meta.embedded.block.glsl
+        begin: '(?i)\b(shared)\b'
+        end: '(?<=\})'
+        patterns:
+          - include: "source.glsl"
+          - include: "#balanced-brackets"
+
+  named-block-config:
+    patterns:
+      - name: keyword.control.named.config.omwfx
+        begin: '(?i)\b(render_target|sampler_1d|sampler_2d|sampler_3d|uniform_bool|uniform_float|uniform_int|uniform_vec2|uniform_vec3|uniform_vec4)\b'
+        end: '(?<=\})'
+        patterns:
+          - name: variable.other
+            begin: '\b([a-z|A-Z]\w*)\b'
+            end: '(?<=\})'
+            contentName: meta.embedded.block.omwfx.config
+            patterns:
+              - include: "#config-block"
+
+  anonymous-block-config:
+    patterns:
+      - name: keyword.control.anonymous.config.omwfx
+        contentName: meta.embedded.block.omwfx.config
+        begin: '(?i)\b(technique)\b'
+        end: '(?<=\})'
+        patterns:
+          - include: "#config-block"
+
+  config-block:
+    patterns:
+      - name: keyword.control.block.config.list
+        begin: '\{'
+        end: '\}'
+        beginCaptures:
+          - 0:
+            name: punctuation.section.property-list.begin.bracket.curly.omwfx
+        endCaptures:
+          - 0:
+            name: punctuation.section.property-list.end.bracket.curly.omwfx
+        patterns:
+          - include: "#config-list"
+
+  config-list:
+    patterns:
+      - begin: '(?<![-a-zA-Z])(?=[-a-zA-Z])'
+        end: '$|(?![-a-zA-Z])'
+        name: meta.property-name.css
+        patterns:
+          - include: "#property-names"
+      - begin: '(=)\s*'
+        beginCaptures:
+          - 1:
+            name: punctuation.separator.key-value.omwfx
+        end: '\s*(;)|\s*(?=}|\))'
+        endCaptures:
+          - 1:
+            name: punctuation.terminator.rule.omwfx
+        contentName: meta.property-value.omwfx
+        patterns:
+          - include: '#commas'
+          - include: '#literal'
+          - include: '#vector'
+          - include: "#constants"
+          - include: "#number"
+          - include: "#string"
+          - include: "#boolean"
+
+      - name: punctuation.terminator.rule.omwfx
+        match: ';'
+
+  balanced-brackets:
+    patterns:
+      - name: keyword.control.block.balanced-brackets
+        begin: '\{'
+        end: '\}'
+        patterns:
+          - include: "#balanced-brackets"
+
+  balanced-paren:
+    patterns:
+      - name: keyword.control.block.balanced-parens
+        begin: '\('
+        end: '\)'
+        patterns:
+          - include: "#balanced-paren"
+
+  boolean:
+    patterns:
+      - name: constant.language
+        match: '(?i)\b(true|false)\b'
+
+  number:
+    patterns:
+      - name: constant.numeric
+        match: '[+-]?([0-9]*[.])?[0-9]+'
+
+  string:
+    patterns:
+      - name: string.quoted.double
+        begin: "\""
+        end: "\""
+        patterns:
+          - name: constant.character.escape
+            match: "\\\\."
+
+  vector:
+    patterns:
+      - name: support.type.property-value.vector
+        begin: '(?i)\s*\b(vec2|vec3|vec4)\b\s*'
+        end: ')'
+        patterns:
+          - name: content.inner
+            begin: '('
+            end: ')'
+            beginCaptures:
+              - 0:
+                name: punctuation.section.property-list.begin.bracket.round.omwfx
+            endCaptures:
+              - 0:
+                name: punctuation.section.property-list.end.bracket.round.omwfx
+        # patterns:
+        #   - include: "#number"
+
+  property-names:
+    patterns:
+      - name: support.type.property-name.omwfx
+        match: '(?i)\b(mag_filter|display_name|width_ratio|glsl_profile|static|height|default|pass_lights|author|source_type|hdr|header|pass_normals|compression|height_ratio|step|internal_format|wrap_r|glsl_extensions|source|min|mipmaps|max|source_format|min_filter|wrap_t|description|wrap_s|size|dynamic|version|glsl_version|passes|width|flags)\b'
+      - name: invalid.illegal.unrecognized-property
+        match: '\b([a-z|A-Z]\w*)\b'
+
+  constants:
+    patterns:
+      - name: support.constant.property-value.omwfx
+        match: '(?i)\b(disable_interiors|disable_exteriors|disable_underwater|disable_abovewater|disable_sunglare|hidden|red|rg|rgb|bgr|rgba|bgra|byte|unsigned_byte|short|unsigned_short|int|unsigned_int|unsigned_int_24_8|float|double|red|r16f|r32f|rg|rg16f|rg32f|rgb|rgb16f|rgb32f|rgba|rgba16f|rgba32f|depth_component16|depth_component24|depth_component32|depth_component32f|auto|arb|s3tc_dxt1|s3tc_dxt3|s3tc_dxt5|pvrtc_2bpp|pvrtc_4bpp|etc|etc2|rgtc1|rgtc2|s3tc_dxt1c|s3tc_dxt1a|clamp|clamp_to_edge|clamp_to_border|repeat|mirror|linear|linear_mipmap_linear|linear_mipmap_nearest|nearest|nearest_mipmap_linear|nearest_mipmap_nearest|dst_alpha|dst_color|one|one_minus_dst_alpha|one_minus_dst_color|one_minus_src_alpha|one_minus_src_color|src_alpha|src_alpha_saturate|src_color|constant_color|one_minus_constant_color|constant_alpha|one_minus_constant_alpha|zero|rgba_min|rgba_max|alpha_min|alpha_max|logic_op|add|subtract|reverse_subtract)\b'
+
+  literal:
+    patterns:
+      - name: support.constant.literal
+        match: '\b([a-z|A-Z]\w*)\b'
+
+  commas:
+    name: punctuation.separator.list.comma.omwfx
+    match: ","
